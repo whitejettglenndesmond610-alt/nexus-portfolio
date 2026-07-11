@@ -39,15 +39,15 @@ function validate() {
   return Object.keys(errors.value).length === 0
 }
 
-/* 提交到 Formspree——替换 YOUR_FORM_ID 为你的真实 ID */
-const FORMSPREE_URL = 'https://formspree.io/f/YOUR_FORM_ID'
+/* 提交到 FormSubmit——无需注册，表单数据直接发到你的邮箱 */
+const FORM_URL = 'https://formsubmit.co/whitejettglenndesmond610@gmail.com'
 
 async function submit() {
   if (!validate()) return
   loading.value = true
 
   try {
-    const res = await fetch(FORMSPREE_URL, {
+    const res = await fetch(FORM_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

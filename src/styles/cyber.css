@@ -2,31 +2,64 @@
    NEXUS — 全局赛博朋克样式（非 scoped，覆盖所有组件）
    ============================================================ */
 
+/* ————————————————————————————————————————————
+   【CSS 自定义属性（CSS 变量）】
+   在 :root 里定义，整个页面任何地方都可以用 var(变量名) 来引用。
+   这样改一个颜色，所有用到它的地方一起变，不用一个一个找。
+   ———————————————————————————————————————————— */
+
 /* ---- 色彩变量 ---- */
 :root {
-  --gold: #FFE600;
-  --gold-dim: rgba(255,230,0,.15);
-  --cyan: #00E5FF;
-  --red: #FF0040;
-  --pink: #D600FF;
-  --border: rgba(255,230,0,.12);
-  --text: #E8ECF0;
-  --sub: #5C6670;
-  --dim: #2A2E35;
+  --gold: #FFE600;          /* 主题金色，赛博朋克标志色 */
+  --gold-dim: rgba(255,230,0,.15);  /* 半透明金色，用于 hover 高亮、滚动条等 */
+  --cyan: #00E5FF;          /* 青色，数据/终端类元素用 */
+  --red: #FF0040;           /* 红色，错误/警告/关闭按钮用 */
+  --pink: #D600FF;          /* 紫色，技能条第二配色 */
+  --border: rgba(255,230,0,.12);   /* 边框默认色，淡金半透明 */
+  --text: #E8ECF0;          /* 正文浅灰白色 */
+  --sub: #5C6670;           /* 辅助文字灰色 */
+  --dim: #2A2E35;           /* 最暗灰，用于弱化/占位/分隔 */
+  /* ———— 金色发光阴影 ————
+     box-shadow 可以叠加多层，用逗号分隔。
+     第一层：近距离发光 12px
+     第二层：远距离柔光 40px
+     叠加后形成"光晕+辉光"效果 */
   --shadow-gold: 0 0 12px rgba(255,230,0,.4), 0 0 40px rgba(255,230,0,.12);
 }
 
+/* ————————————————————————————————————————————
+   【自定义滚动条】
+   ::-webkit-scrollbar 是浏览器提供的伪元素，用来美化滚动条外观。
+   注意：这些都是 WebKit 内核（Chrome/Edge/Safari）专属，
+   Firefox 需要用 scrollbar-width / scrollbar-color（后面会用到）。
+   ———————————————————————————————————————————— */
+
 /* ---- 全局滚动条 ---- */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
+/* 滚动条整体宽度 4px，高度也是 4px（用于水平滚动条） */
 ::-webkit-scrollbar-track { background: transparent; }
+/* 滚动条轨道（背景轨道）完全透明，不抢视觉 */
 ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+/* 滚动条滑块用淡金色，圆角 2px */
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,230,0,.3); }
+/* 鼠标悬停时滑块颜色加深 */
 
 /* ==================== 仪表盘 ==================== */
+/* ————————————————————————————————————————————
+   【仪表盘布局】
+   display: flex + flex-direction: column = 垂直方向弹性布局
+   min-height: 100vh 保证至少占满整个屏幕高度
+   ———————————————————————————————————————————— */
 .dashboard {
   display: flex; flex-direction: column;
   min-height: 100vh; padding: 1.5rem 2rem;
 }
+/* ————————————————————————————————————————————
+   【CSS Grid 布局】
+   grid-template-columns: 1fr 1fr 表示等分成两列，各占一份空间。
+   gap: 2rem 是列与列、行与行之间的间距。
+   margin: auto 在 Grid/Flex 中可以水平居中。
+   ———————————————————————————————————————————— */
 .dash-inner {
   flex: 1; display: grid;
   grid-template-columns: 1fr 1fr; gap: 2rem;
@@ -40,12 +73,33 @@
   border: 2px solid var(--border);
   background: rgba(12,12,20,.8);
   padding: 2rem;
+  /* ————————————————————————————————————————————
+     【clip-path 切角效果】
+     polygon(0 16px, 16px 0, ...) 的意思是：
+     用多边形裁剪元素的可见区域。
+     - 左上角从 (0, 16px) 开始，到 (16px, 0)，形成 45° 斜切角。
+     - 右上角、右下角、左下角同理。
+     这是赛博朋克风格的标志性元素之一——"缺角"面板。
+     ———————————————————————————————————————————— */
   clip-path: polygon(0 16px, 16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
 }
+/* ————————————————————————————————————————————
+   【::before 伪元素 — 顶部发光线】
+   ::before 不需要在 HTML 里写额外的元素，CSS 就会在 .bio-panel 
+   内部的最前面自动生成一个"虚拟元素"。必须设置 content 属性。
+   这里用它画顶部的一条金色发光横线。
+   position: absolute 让它脱离正常文档流，相对于 .bio-panel 绝对定位。
+   box-shadow: 0 0 6px 制造发光效果。
+   ———————————————————————————————————————————— */
 .bio-panel::before {
   content: ''; position: absolute; top: -2px; left: 20px; right: 20px; height: 1px;
   background: var(--gold); opacity: .4; box-shadow: 0 0 6px var(--gold);
 }
+/* ————————————————————————————————————————————
+   【::after 伪元素 — 底部淡金线】
+   同理，::after 在元素内部的最后面生成虚拟元素。
+   这里画底部的一条半透明金色线，比顶部暗（opacity: .15），形成层次感。
+   ———————————————————————————————————————————— */
 .bio-panel::after {
   content: ''; position: absolute; bottom: -2px; left: 20px; right: 20px; height: 1px;
   background: var(--gold); opacity: .15;
@@ -55,18 +109,36 @@
   padding-bottom: 1rem; margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border);
 }
+/* ————————————————————————————————————————————
+   【发光菱形点 + 动画】
+   用 clip-path: polygon 裁出菱形（从正上方中点→右边中点→下方中点→左边中点）
+   box-shadow: var(--shadow-gold) 复用之前定义的多层发光阴影。
+   animation: dotPulse 让它持续呼吸闪烁。
+   ———————————————————————————————————————————— */
 .header-dot {
   width: 8px; height: 8px; background: var(--gold);
   box-shadow: var(--shadow-gold);
   clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
   animation: dotPulse 2s ease-in-out infinite;
 }
+/* ————————————————————————————————————————————
+   【@keyframes 关键帧动画】
+   定义动画的关键帧序列。0% 是动画开始，100% 是结束，50% 是中间点。
+   ease-in-out 表示缓入缓出，让运动更自然。
+   infinite 让动画无限循环。
+   transform: scale(1.3) 把元素放大到 1.3 倍。
+   ———————————————————————————————————————————— */
 @keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(1.3)} }
 .header-label {
   font-family: 'Share Tech Mono', monospace;
   font-size: .58rem; color: var(--sub); letter-spacing: .18em;
 }
 .bio-content { display: flex; gap: 2rem; align-items: flex-start; }
+/* ————————————————————————————————————————————
+   【flex-shrink: 0】
+   在 flex 布局中，子元素默认可以收缩。设置 flex-shrink: 0 
+   表示"无论空间多挤，我都不会缩小"，常用于头像这种固定尺寸元素。
+   ———————————————————————————————————————————— */
 .bio-avatar {
   width: 80px; height: 80px; flex-shrink: 0;
   border: 1.5px solid var(--border);
@@ -76,27 +148,111 @@
 }
 .bio-avatar svg { width: 80%; height: 80%; }
 .bio-text { flex: 1; min-width: 0; }
+/* min-width: 0 在 flex 子元素中很重要：
+   它允许元素收缩到比内容更窄，防止文字溢出。
+   默认 flex 子元素的 min-width 是 auto（等于内容宽度），
+   设为 0 后才能真正收缩。 */
 .bio-greeting {
   font-family: 'Share Tech Mono', monospace;
   font-size: .55rem; color: var(--dim); letter-spacing: .12em; margin-bottom: .5rem;
 }
+/* ————————————————————————————————————————————
+   【text-shadow 文字发光】
+   text-shadow 语法：水平偏移 垂直偏移 模糊半径 颜色
+   0 0 16px 表示不偏移，16px 模糊，形成"外发光"效果。
+   叠加两层：近距离 16px + 远距离 50px，营造霓虹灯感。
+   clamp(最小值, 理想值, 最大值) 让字体大小随屏幕宽度变化。
+   ———————————————————————————————————————————— */
 .bio-name {
+  position: relative;
   font-family: 'Orbitron', monospace;
   font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 900;
-  letter-spacing: .2em; color: var(--gold);
+  letter-spacing: .2em;
+  color: var(--gold);
   text-shadow: 0 0 16px rgba(255,230,0,.6), 0 0 50px rgba(255,230,0,.2);
   margin-bottom: .3rem; line-height: 1.1;
+  /* 霓虹频闪 — 发光强度抖动 + 左右微位移模拟信号扰动 */
+  animation: neonFlicker 8s infinite;
+}
+
+/* 青色残影切片 — 斜向信号干扰 */
+.bio-name::before {
+  content: attr(data-text);
+  position: absolute; inset: 0; z-index: -1;
+  color: var(--cyan);
+  text-shadow: 0 0 12px var(--cyan), 0 0 30px rgba(0,229,255,.6);
+  opacity: 0;
+  transform: translate(-4px, 2px);
+  animation: glitchCyan 5s infinite;
+}
+
+/* 红色残影切片 — 反方向斜向干扰 */
+.bio-name::after {
+  content: attr(data-text);
+  position: absolute; inset: 0; z-index: -1;
+  color: var(--red);
+  text-shadow: 0 0 12px var(--red), 0 0 30px rgba(255,0,64,.6);
+  opacity: 0;
+  transform: translate(4px, -2px);
+  animation: glitchRed 6s infinite;
+}
+
+@keyframes neonFlicker {
+  0%,   8%   { transform: translateX(0);   text-shadow: 0 0 16px rgba(255,230,0,.6),  0 0 50px rgba(255,230,0,.2);  }
+  9%,   11%  { transform: translateX(0);   text-shadow: 0 0 2px  rgba(255,230,0,.08), 0 0 6px  rgba(255,230,0,.03); }
+  12%,  24%  { transform: translateX(0);   text-shadow: 0 0 16px rgba(255,230,0,.6),  0 0 50px rgba(255,230,0,.2);  }
+  25%,  26%  { transform: translateX(3px); text-shadow: 0 0 28px rgba(0,229,255,.9),  0 0 70px rgba(0,229,255,.4);  }
+  27%,  44%  { transform: translateX(0);   text-shadow: 0 0 16px rgba(255,230,0,.6),  0 0 50px rgba(255,230,0,.2);  }
+  45%        { transform: translateX(-4px);text-shadow: 0 0 36px rgba(214,0,255,.8),  0 0 80px rgba(214,0,255,.3);  }
+  46%,  47%  { transform: translateX(0);   text-shadow: 0 0 1px  rgba(255,230,0,.05), 0 0 3px  rgba(255,230,0,.02); }
+  48%,  64%  { transform: translateX(0);   text-shadow: 0 0 16px rgba(255,230,0,.6),  0 0 50px rgba(255,230,0,.2);  }
+  65%,  67%  { transform: translateX(-3px);text-shadow: 0 0 26px rgba(0,229,255,.85), 0 0 65px rgba(0,229,255,.35); }
+  68%,  79%  { transform: translateX(0);   text-shadow: 0 0 16px rgba(255,230,0,.6),  0 0 50px rgba(255,230,0,.2);  }
+  80%,  82%  { transform: translateX(0);   text-shadow: 0 0 2px  rgba(255,230,0,.08), 0 0 6px  rgba(255,230,0,.03); }
+  83%,  100% { transform: translateX(0);   text-shadow: 0 0 16px rgba(255,230,0,.6),  0 0 50px rgba(255,230,0,.2);  }
+}
+
+/* 青色斜向干扰切片 — 用 polygon 裁出斜向条纹 */
+@keyframes glitchCyan {
+  0%,   3%   { opacity: 0; }
+  4%,   6%   { opacity: .9; clip-path: polygon(0 20%, 0 45%, 100% 15%, 100% 0); }
+  7%,   10%  { opacity: 0; }
+  11%,  12%  { opacity: .8; clip-path: polygon(0 60%, 0 80%, 100% 50%, 100% 30%); }
+  13%,  20%  { opacity: 0; }
+  21%,  23%  { opacity: .95; clip-path: polygon(0 10%, 0 35%, 100% 5%, 100% 0); }
+  24%,  35%  { opacity: 0; }
+  36%,  38%  { opacity: .85; clip-path: polygon(0 40%, 0 65%, 100% 35%, 100% 10%); }
+  39%,  50%  { opacity: 0; }
+  51%,  53%  { opacity: .9; clip-path: polygon(0 70%, 0 90%, 100% 60%, 100% 40%); }
+  54%,  100% { opacity: 0; }
+}
+
+/* 红色斜向干扰切片 — 不同节奏 + 相反斜向 */
+@keyframes glitchRed {
+  0%,   6%   { opacity: 0; }
+  7%,   9%   { opacity: .85; clip-path: polygon(0 5%, 0 30%, 100% 0, 100% 0); }
+  10%,  14%  { opacity: 0; }
+  15%,  17%  { opacity: .9; clip-path: polygon(0 50%, 0 75%, 100% 25%, 100% 0); }
+  18%,  26%  { opacity: 0; }
+  27%,  28%  { opacity: .8; clip-path: polygon(0 30%, 0 55%, 100% 10%, 100% 0); }
+  29%,  40%  { opacity: 0; }
+  41%,  43%  { opacity: .9; clip-path: polygon(0 65%, 0 85%, 100% 55%, 100% 30%); }
+  44%,  55%  { opacity: 0; }
+  56%,  58%  { opacity: .85; clip-path: polygon(0 15%, 0 40%, 100% 0, 100% 0); }
+  59%,  100% { opacity: 0; }
 }
 .bio-role {
   font-family: 'Rajdhani', sans-serif;
   font-size: .8rem; color: var(--sub); letter-spacing: .25em;
   margin-bottom: .6rem; font-weight: 600;
 }
+/* 终端风格的文字，青色 + 发光阴影模拟命令行界面 */
 .bio-terminal {
   font-family: 'Share Tech Mono', monospace;
   font-size: .6rem; color: var(--cyan); line-height: 1.5;
   text-shadow: 0 0 6px rgba(0,229,255,.4);
 }
+/* 统计数据行：border-top 画分隔线，gap 控制间距 */
 .bio-stats {
   display: flex; gap: 2rem; margin-top: 1.5rem;
   padding-top: 1rem; border-top: 1px solid var(--border);
@@ -113,9 +269,22 @@
 }
 
 /* ===== 导航矩阵按钮 ===== */
+/* ————————————————————————————————————————————
+   【2×3 Grid 按钮布局】
+   导航区域用 Grid 布局，2 列 3 行 = 6 个按钮。
+   grid-template-rows: 1fr 1fr 1fr 表示三行等高。
+   ———————————————————————————————————————————— */
 .nav-matrix {
   display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 1rem;
 }
+/* ————————————————————————————————————————————
+   【transition 过渡动画】
+   transition: border-color .25s, box-shadow .25s, background .25s 表示：
+   当这些属性的值发生变化时（比如鼠标悬停），在 0.25 秒内平滑过渡，
+   而不是突然跳变。这是鼠标悬停交互的基础。
+   它与 @keyframes 的区别是：transition 需要"触发"（如 :hover），
+   而 animation 是自动播放的。
+   ———————————————————————————————————————————— */
 .nav-btn {
   position: relative; background: rgba(12,12,20,.6);
   border: 1.5px solid var(--border); cursor: none;
@@ -126,22 +295,45 @@
   transition: border-color .25s, box-shadow .25s, background .25s;
   overflow: hidden;
 }
+/* ————————————————————————————————————————————
+   【光泽扫过效果 ::after】
+   按钮上的 ::after 伪元素画了一个从左上到右下的线性渐变。
+   正常状态 opacity: 0 看不见；hover 时 opacity: 1 显现。
+   transition: opacity .3s 让显示/隐藏有淡入淡出。
+   inset: 0 是 top/right/bottom/left 全部为 0 的简写，铺满父元素。
+   ———————————————————————————————————————————— */
 .nav-btn::after {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(135deg, transparent 30%, rgba(255,230,0,.04) 50%, transparent 70%);
   opacity: 0; transition: opacity .3s;
 }
+/* ————————————————————————————————————————————
+   【:hover 悬停状态】
+   鼠标悬停时：边框变金色、外发光+内发光（inset）、背景变暖。
+   box-shadow 中用 inset 表示向元素内部投影。
+   ———————————————————————————————————————————— */
 .nav-btn:hover {
   border-color: var(--gold);
   box-shadow: var(--shadow-gold), inset 0 0 40px rgba(255,230,0,.04);
   background: rgba(20,18,10,.7);
 }
 .nav-btn:hover::after { opacity: 1; }
+/* ————————————————————————————————————————————
+   【disabled 禁用状态】
+   opacity: .35 整体变淡，pointer-events: none 禁止点击交互。
+   .disabled:hover 覆盖了正常 hover 样式，保持禁用外观不变。
+   ———————————————————————————————————————————— */
 .nav-btn.disabled { opacity: .35; pointer-events: none; }
 .nav-btn.disabled:hover { border-color: var(--border); box-shadow: none; background: rgba(12,12,20,.6); }
 .nav-btn.disabled:hover .btn-angle { opacity: .08; }
 .nav-btn.disabled:hover .btn-id { color: var(--dim); text-shadow: none; }
 .nav-btn.disabled:hover .btn-title { color: var(--text); text-shadow: none; }
+/* ————————————————————————————————————————————
+   【角落装饰角标】
+   四个角的装饰线，用绝对定位放在按钮的四角。
+   每个角只有两条边框（如 .tl 只有 top 和 left 边框），
+   形成 L 型角标。默认很淡（opacity: .08），hover 时亮起。
+   ———————————————————————————————————————————— */
 .btn-angle {
   position: absolute; width: 16px; height: 16px;
   border-color: var(--gold); border-style: solid;
@@ -152,21 +344,25 @@
 .btn-angle.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
 .btn-angle.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 .nav-btn:hover .btn-angle { opacity: 1; }
+/* 按钮编号（如 "01", "02"），默认暗色，hover 变金发光 */
 .btn-id {
   font-family: 'Orbitron', monospace; font-size: .55rem;
   color: var(--dim); letter-spacing: .18em;
   transition: color .3s, text-shadow .3s;
 }
 .nav-btn:hover .btn-id { color: var(--gold); text-shadow: var(--shadow-gold); }
+/* 按钮标题，hover 也变金发光 */
 .btn-title {
   font-family: 'Orbitron', monospace; font-size: 1.15rem; font-weight: 700;
   letter-spacing: .12em; transition: color .3s, text-shadow .3s;
 }
 .nav-btn:hover .btn-title { color: var(--gold); text-shadow: var(--shadow-gold); }
+/* 按钮副标题，灰色小字 */
 .btn-sub {
   font-family: 'Share Tech Mono', monospace;
   font-size: .55rem; color: var(--sub); letter-spacing: .14em;
 }
+/* 仪表盘底部状态栏 */
 .dash-footer {
   display: flex; gap: 1.2rem; justify-content: center;
   padding: .8rem 0 0; font-family: 'Share Tech Mono', monospace;
@@ -176,15 +372,37 @@
 .signal-bar { color: var(--cyan); text-shadow: 0 0 6px rgba(0,229,255,.5); }
 
 /* ==================== 覆盖层通用 ==================== */
+/* ————————————————————————————————————————————
+   【覆盖层系统（Overlay System）】
+   overlay-container 是点击导航按钮后弹出的全屏覆盖层。
+   position: fixed 让它固定在屏幕上方，不随页面滚动。
+   inset: 0 = top/right/bottom/left 全为 0，铺满整个视口。
+   z-index: 100 保证它在所有普通内容之上。
+   里面分两层：overlay-bg（模糊背景）和 overlay-inner（内容区）。
+   ———————————————————————————————————————————— */
 .overlay-container {
   position: fixed; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
 }
+/* ————————————————————————————————————————————
+   【backdrop-filter 毛玻璃效果】
+   backdrop-filter: blur(16px) 对元素后面的内容做模糊处理，
+   就像一块磨砂玻璃，比纯色背景更有层次和科技感。
+   -webkit-backdrop-filter 是 Safari 兼容写法。
+   两者都要写，保证在 Safari 上也有效。
+   ———————————————————————————————————————————— */
 .overlay-bg {
   position: absolute; inset: 0;
   background: rgba(8,8,8,.94);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
 }
+/* ————————————————————————————————————————————
+   【内容滚动区】
+   overflow-y: auto 当内容超出 max-height: 90vh 时出现垂直滚动条。
+   scrollbar-width: thin 是 Firefox 的滚动条细窄样式设置。
+   scrollbar-color: 滑块颜色 轨道颜色（Firefox 专属），
+   相当于对上面 ::-webkit-scrollbar 的 Firefox 等价写法。
+   ———————————————————————————————————————————— */
 .overlay-inner {
   position: relative; z-index: 1; width: 100%;
   max-width: 1000px; max-height: 90vh;
@@ -194,6 +412,11 @@
 .overlay-inner::-webkit-scrollbar { width: 4px; }
 .overlay-inner::-webkit-scrollbar-track { background: transparent; }
 .overlay-inner::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+/* ————————————————————————————————————————————
+   【覆盖层标题栏 + 底部发光装饰线】
+   ::after 伪元素画标题下方的一道金色短线（只占 30% 宽度），
+   比 border-bottom 更亮更突出，类似"下划线高亮"效果。
+   ———————————————————————————————————————————— */
 .overlay-header {
   display: flex; align-items: center; gap: 1rem;
   margin-bottom: 2.5rem; padding-bottom: .8rem;
@@ -215,6 +438,7 @@
   text-shadow: 0 0 12px rgba(255,230,0,.4); letter-spacing: .14em;
 }
 .oh-slash { color: var(--dim); margin-right: .3rem; }
+/* 关闭按钮：hover 时边框变红，闪烁红色警告效果 */
 .oh-close {
   font-family: 'Share Tech Mono', monospace; font-size: .6rem;
   color: var(--sub); letter-spacing: .12em;
@@ -226,6 +450,11 @@
 .oh-close:hover { border-color: var(--red); color: var(--red); box-shadow: var(--shadow-red); }
 
 /* ==================== 技能卡片网格 ==================== */
+/* ————————————————————————————————————————————
+   【repeat(3, 1fr) 三列自动等宽】
+   repeat(数量, 大小) 是 grid-template-columns 的简写，
+   这里表示"重复 3 次，每次 1fr"，也就是三等分。
+   ———————————————————————————————————————————— */
 .skills-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem;
 }
@@ -252,14 +481,25 @@
   letter-spacing: .1em; display: block; margin-bottom: .5rem;
 }
 .sn-bar-wrap { display: flex; align-items: center; gap: .6rem; margin-bottom: .4rem; }
+/* ————————————————————————————————————————————
+   【进度条轨道 — 斜切形状】
+   clip-path 让进度条两端略微倾斜，像被切过一样，增加科技感。
+   overflow: hidden 把超出轨道的进度条部分裁剪掉。
+   ———————————————————————————————————————————— */
 .sn-bar-track {
   flex: 1; height: 4px; background: rgba(255,255,255,.04);
   clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%); overflow: hidden;
 }
+/* ————————————————————————————————————————————
+   【进度条填充 + 发光】
+   .cy / .pk / .gl 分别用青色、紫色、金色发光。
+   每种颜色都用 box-shadow 做出"霓虹灯进度条"效果。
+   ———————————————————————————————————————————— */
 .sn-bar { height: 100%; width: 0; position: relative; }
 .sn-bar.cy { background: var(--cyan); box-shadow: 0 0 8px rgba(0,229,255,.6); }
 .sn-bar.pk { background: var(--pink); box-shadow: 0 0 8px rgba(214,0,255,.6); }
 .sn-bar.gl { background: var(--gold); box-shadow: 0 0 8px rgba(255,230,0,.6); }
+/* 进度条右端的高光点：白色小块 + blur(6px) 高斯模糊，模拟终端扫描线 */
 .sn-bar::after {
   content: ''; position: absolute; top: 0; right: 0;
   width: 20px; height: 100%; background: #fff; filter: blur(6px); opacity: .6;
@@ -274,6 +514,11 @@
 }
 
 /* ==================== 项目卡片 ==================== */
+/* ————————————————————————————————————————————
+   【水平滚动容器】
+   display: flex + overflow-x: auto 让子元素水平排列且可以横向滚动。
+   比 Grid 更适合不定数量的卡片。
+   ———————————————————————————————————————————— */
 .projects-scroll {
   display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: .8rem;
   scrollbar-width: thin; scrollbar-color: var(--gold-dim) transparent;
@@ -281,6 +526,11 @@
 .projects-scroll::-webkit-scrollbar { height: 3px; }
 .projects-scroll::-webkit-scrollbar-track { background: transparent; }
 .projects-scroll::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+/* ————————————————————————————————————————————
+   【flex-shrink: 0 防止卡片被压缩】
+   在 flex 容器中，子元素默认会缩小以适应空间。
+   flex-shrink: 0 锁定卡片宽度为 280px，保证横向滚动时卡片宽度不变。
+   ———————————————————————————————————————————— */
 .project-card {
   flex-shrink: 0; width: 280px;
   border: 1.5px solid var(--border); cursor: none;
@@ -291,21 +541,34 @@
 .project-card:hover {
   border-color: var(--gold); box-shadow: var(--shadow-gold); background: rgba(20,18,10,.5);
 }
+/* ————————————————————————————————————————————
+   【aspect-ratio 固定宽高比】
+   aspect-ratio: 4/3 让图片区域始终保持 4:3 的比例，
+   无论宽度怎么变，高度自动适配。这是新 CSS 属性，比 padding-top hack 简洁。
+   下面的 repeating-linear-gradient 画水平扫描线纹理。
+   ———————————————————————————————————————————— */
 .pc-img {
   position: relative; aspect-ratio: 4/3;
   background: linear-gradient(135deg, rgba(255,230,0,.06), rgba(0,229,255,.06));
   display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
+/* 扫描线纹理：每 4px 一组，2px 透明 + 2px 淡金色，无限重复 */
 .pc-img::after {
   content: ''; position: absolute; inset: 0;
   background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,230,0,.03) 2px, rgba(255,230,0,.03) 4px);
 }
+/* 项目代码大字（背景装饰），hover 时放大 + 变亮 */
 .pc-code {
   font-family: 'Orbitron', monospace; font-size: 2rem; font-weight: 900;
   color: var(--dim); opacity: .2;
   transition: transform .8s ease, opacity .3s;
 }
 .project-card:hover .pc-code { transform: scale(1.12); opacity: .35; }
+/* ————————————————————————————————————————————
+   【悬停遮罩层】
+   初始 opacity: 0 不可见，hover 时 opacity: 1 渐显。
+   里面有一个"VIEW PROJECT" 标签，带切角和发光效果。
+   ———————————————————————————————————————————— */
 .pc-overlay {
   position: absolute; inset: 0; z-index: 1;
   background: rgba(8,8,12,.75); display: flex; align-items: center;
@@ -320,6 +583,7 @@
   clip-path: polygon(0 6px, 6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
 }
 .pc-info { padding: 1rem; }
+/* 项目状态标签：active=青色 / done=金色 / dev=红色，各有对应发光 */
 .pc-status {
   font-family: 'Share Tech Mono', monospace; font-size: .48rem; letter-spacing: .18em;
   padding: 2px 8px; display: inline-block; margin-bottom: .4rem;
@@ -337,15 +601,22 @@
 }
 
 /* ==================== 终端窗口 ==================== */
+/* ————————————————————————————————————————————
+   【终端窗口 — 模拟命令行界面】
+   包括标题栏（三个圆点模拟 macOS 窗口按钮）+ 终端内容区。
+   整体风格模仿 retro 终端/黑客电影界面。
+   ———————————————————————————————————————————— */
 .terminal-window {
   max-width: 600px; border: 1.5px solid var(--border);
   background: rgba(12,12,20,.6);
 }
+/* 终端标题栏：三个圆点 + 标题文字 */
 .tw-header {
   display: flex; align-items: center; gap: 6px;
   padding: .5rem 1rem; background: rgba(0,0,0,.4);
   border-bottom: 1.5px solid var(--border);
 }
+/* 红/黄/绿三个圆点，模拟窗口控制按钮，各自有发光 */
 .tw-dot { width: 9px; height: 9px; }
 .tw-dot.r { background: var(--red); box-shadow: 0 0 4px var(--red); }
 .tw-dot.y { background: var(--gold); box-shadow: 0 0 4px var(--gold); }
@@ -355,6 +626,7 @@
   color: var(--sub); letter-spacing: .1em; margin-left: 8px;
 }
 .tw-body { padding: 1.5rem; }
+/* 终端输出行，青色发光模拟 CRT 屏幕效果 */
 .tw-line {
   font-family: 'Share Tech Mono', monospace; font-size: .6rem;
   color: var(--cyan); margin-bottom: .4rem; text-shadow: 0 0 4px rgba(0,229,255,.4);
@@ -366,6 +638,12 @@
   display: block; font-family: 'Share Tech Mono', monospace;
   font-size: .58rem; color: var(--sub); letter-spacing: .1em; margin-bottom: .3rem;
 }
+/* ————————————————————————————————————————————
+   【表单输入框】
+   caret-color: var(--cyan) 把输入光标设为青色，配合终端主题。
+   placeholder 是输入框的占位提示文本，用 dim 色弱化显示。
+   聚焦时（:focus）边框变金 + 发光，提示用户当前在输入。
+   ———————————————————————————————————————————— */
 .tw-field input, .tw-field textarea {
   width: 100%; padding: .5rem .7rem;
   font-family: 'Share Tech Mono', monospace; font-size: .68rem;
@@ -380,11 +658,13 @@
 }
 .tw-field input::placeholder, .tw-field textarea::placeholder { color: var(--dim); }
 .tw-field textarea { resize: vertical; min-height: 70px; }
+/* 错误提示信息：默认透明（opacity: 0），有 .error 时才可见 */
 .tw-err {
   display: block; font-family: 'Share Tech Mono', monospace;
   font-size: .48rem; color: var(--red); margin-top: .2rem;
   min-height: 1.2em; opacity: 0;
 }
+/* 验证状态：.error 边框变红发光 / .success 边框变青发光 */
 .tw-field.error input, .tw-field.error textarea {
   border-color: var(--red); box-shadow: 0 0 8px rgba(255,0,64,.3);
 }
@@ -392,6 +672,13 @@
 .tw-field.success input, .tw-field.success textarea {
   border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,229,255,.3);
 }
+/* ————————————————————————————————————————————
+   【提交按钮 + 加载动画】
+   .loading 时按钮文字隐藏（visibility: hidden），
+   同时三个三角点出现做弹跳动画。
+   visibility: hidden 保留元素占位（不像 display:none 会消失），
+   避免按钮尺寸突变。
+   ———————————————————————————————————————————— */
 .tw-submit {
   display: flex; align-items: center; justify-content: center; gap: .5rem;
   padding: .7rem; font-family: 'Orbitron', monospace; font-size: .65rem;
@@ -405,23 +692,46 @@
   box-shadow: var(--shadow-gold);
 }
 .tw-submit.loading .tw-btn-label { visibility: hidden; }
+/* 加载指示器：默认不可见，.loading 时显示 */
 .tw-btn-loader { position: absolute; display: flex; gap: 5px; opacity: 0; }
 .tw-submit.loading .tw-btn-loader { opacity: 1; }
+/* 三个三角点，各自用动画延时（animation-delay）形成波浪弹跳节奏 */
 .tw-btn-loader i {
   display: block; width: 4px; height: 4px; background: var(--gold);
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   box-shadow: 0 0 6px var(--gold);
   animation: loaderBounce .6s ease-in-out infinite alternate;
 }
+/* n:child(2) 延迟 0.2s，n:child(3) 延迟 0.4s → 依次弹跳 */
 .tw-btn-loader i:nth-child(2) { animation-delay: .2s; }
 .tw-btn-loader i:nth-child(3) { animation-delay: .4s; }
+/* ————————————————————————————————————————————
+   【加载点弹跳动画】
+   alternate 表示动画在 "from → to" 和 "to → from" 之间交替，
+   所以点会先跳起来再落下再跳起，无限循环。
+   ———————————————————————————————————————————— */
 @keyframes loaderBounce {
   from { opacity: .2; transform: translateY(0); }
   to { opacity: 1; transform: translateY(-8px); }
 }
 
 /* ==================== 时间轴 ==================== */
+/* ————————————————————————————————————————————
+   【时间轴布局 — 左右交替卡片】
+   核心思路：一条竖线在中间，卡片交替放在左边和右边。
+   桌面端：.tl-card.left 靠左（margin-right: auto），
+          .tl-card.right 靠右（margin-left: auto）。
+   移动端：竖线移到左侧，所有卡片都排在右边。
+   ———————————————————————————————————————————— */
 .timeline { position: relative; max-width: 720px; margin: 0 auto; padding: .5rem 0; }
+/* ————————————————————————————————————————————
+   【中间竖线 — 渐变色 + 发光】
+   left: 50% 让线在父容器正中间。
+   transform: translateX(-50%) 是 CSS 经典居中技巧：
+   因为 left: 50% 是把元素左边缘放在 50% 位置，
+   需要再向左偏移自身宽度的一半（-50%）才能真正居中。
+   linear-gradient 让线从上到下呈金色→青色→紫色→金色的渐变。
+   ———————————————————————————————————————————— */
 .tl-line {
   position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
   transform: translateX(-50%);
@@ -430,6 +740,12 @@
 }
 .tl-entry { position: relative; margin-bottom: 3rem; }
 .tl-entry:last-child { margin-bottom: .5rem; }
+/* ————————————————————————————————————————————
+   【时间轴标记点 — 菱形发光节点】
+   left: 50% + transform: translate(-50%,-50%) 同时水平垂直居中。
+   外层菱形（14px）+ 内层小菱形（4px ::after），
+   形成"空心菱形套实心菱形"效果。
+   ———————————————————————————————————————————— */
 .tl-marker {
   position: absolute; left: 50%; top: 1.4rem;
   width: 14px; height: 14px; transform: translate(-50%,-50%);
@@ -446,19 +762,30 @@
   clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
   transform: translate(-50%,-50%);
 }
+/* 已完成标记点：青色 */
 .tl-marker.done {
   border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,229,255,.4), 0 0 20px rgba(0,229,255,.12);
 }
 .tl-marker.done::after { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+/* 当前活跃标记点：金色 + 呼吸动画 markerPulse */
 .tl-marker.active {
   border-color: var(--gold);
   box-shadow: 0 0 16px rgba(255,230,0,.7), 0 0 35px rgba(255,230,0,.25);
   animation: markerPulse 2s ease-in-out infinite;
 }
+/* 活跃点的发光呼吸动画：亮→暗→亮 循环，提示用户"这是当前位置" */
 @keyframes markerPulse {
   0%,100% { box-shadow: 0 0 16px rgba(255,230,0,.7), 0 0 35px rgba(255,230,0,.25); }
   50%     { box-shadow: 0 0 6px rgba(255,230,0,.3), 0 0 14px rgba(255,230,0,.08); }
 }
+/* ————————————————————————————————————————————
+   【时间轴卡片】
+   width: 43% 让卡片宽度不到一半，留出中间竖线的空间。
+   .left 用 margin-right: auto 推到左边，
+   .right 用 margin-left: auto 推到右边。
+   配合 .tl-line 在 50% 位置，形成左右交替布局。
+   hover 时卡片微微上浮（translateY(-2px)）。
+   ———————————————————————————————————————————— */
 .tl-card {
   width: 43%; padding: 1.4rem;
   border: 1.5px solid var(--border); background: rgba(12,12,20,.5);
@@ -470,20 +797,27 @@
   box-shadow: 0 0 20px rgba(255,230,0,.1), inset 0 0 30px rgba(255,230,0,.02);
   background: rgba(16,14,10,.6); transform: translateY(-2px);
 }
+/* margin-right: auto 把卡片推到左边 → 左列卡片 */
 .tl-card.left  { margin-right: auto; text-align: right;  padding-right: 2rem; }
+/* margin-left: auto 把卡片推到右边 → 右列卡片 */
 .tl-card.right { margin-left:  auto; text-align: left;   padding-left:  2rem; }
+/* 日期：Orbitron 字体 + 金色发光 */
 .tl-date {
   font-family: 'Orbitron', monospace; font-size: .68rem; font-weight: 700;
   color: var(--gold); letter-spacing: .15em;
   text-shadow: 0 0 8px rgba(255,230,0,.5); display: block; margin-bottom: .6rem;
 }
+/* 标题行包含标题文字 + ::after 装饰线 */
 .tl-title {
   font-family: 'Rajdhani', sans-serif; font-size: .9rem; font-weight: 700;
   letter-spacing: .06em; color: var(--text); margin-bottom: .5rem;
   display: flex; align-items: center; gap: .5rem;
 }
+/* 右列：装饰线在标题右边（flex-direction: row，线在文字后面） */
 .tl-card.right .tl-title { flex-direction: row; }
+/* 左列：装饰线在标题左边（flex-direction: row-reverse，线在文字前面） */
 .tl-card.left  .tl-title { flex-direction: row-reverse; }
+/* 标题后面的装饰线：flex: 1 让它自动填满剩余空间 */
 .tl-title::after {
   content: ''; display: block; height: 1px;
   background: var(--gold); box-shadow: 0 0 4px var(--gold);
@@ -492,6 +826,14 @@
 .tl-desc { font-size: .75rem; color: var(--sub); line-height: 1.7; }
 
 /* ==================== Toast ==================== */
+/* ————————————————————————————————————————————
+   【Toast 通知弹窗】
+   position: fixed 固定定位，右下角显示。
+   默认 transform: translateX(120%) 隐藏在屏幕右侧之外。
+   .active 时 translateX(0) 滑入屏幕内。
+   cubic-bezier(.16,1,.3,1) 是自定义缓动曲线，让滑入有"弹性"感。
+   z-index: 99999 保证在所有元素之上。
+   ———————————————————————————————————————————— */
 .sys-toast {
   position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999;
   background: #0c0c14; border: 1.5px solid var(--border);
@@ -503,23 +845,46 @@
 .sys-toast.active { transform: translateX(0); }
 
 /* ==================== 响应式 ==================== */
+/* ————————————————————————————————————————————
+   【@media 响应式断点（Responsive Breakpoints）】
+   @media (max-width: 860px) 表示"屏幕宽度 ≤ 860px 时生效"。
+   这是移动端/平板适配的核心机制：在不同屏幕尺寸下
+   调整布局，比如把两列变一列、缩小间距等。
+
+   三个断点：
+   860px — 平板：仪表盘变单列、技能卡片变两列
+   640px — 大手机：时间轴卡片全部右对齐
+   520px — 小手机：头像竖排、技能卡片全单列
+   ———————————————————————————————————————————— */
 @media (max-width: 860px) {
+  /* 仪表盘从两列变单列 */
   .dash-inner { grid-template-columns: 1fr; }
+  /* 导航按钮保持 2 列 */
   .nav-matrix { grid-template-columns: 1fr 1fr; }
+  /* 技能卡片从 3 列变 2 列 */
   .skills-grid { grid-template-columns: repeat(2, 1fr); }
+  /* 覆盖层内边距缩小 */
   .overlay-inner { margin: 1rem; }
 }
 @media (max-width: 640px) {
+  /* 时间轴竖线从中间移到左边 22px 处 */
   .tl-line { left: 22px; }
+  /* 时间轴标记点跟着移到左边 */
   .tl-marker { left: 22px; }
+  /* 所有卡片宽度填满剩余空间，统一左对齐，
+     !important 确保覆盖 .tl-card.left/.right 的原有规则 */
   .tl-card { width: calc(100% - 52px); margin-left: 52px !important; text-align: left !important; padding: 1.2rem !important; }
+  /* 标题装饰线也统一放在右边 */
   .tl-card .tl-title { flex-direction: row !important; }
 }
 @media (max-width: 520px) {
   .dashboard { padding: 1rem; }
+  /* 头像和文字从上到下排列 */
   .bio-content { flex-direction: column; align-items: center; text-align: center; gap: 1rem; }
   .bio-stats { justify-content: center; }
+  /* 按钮内边距缩小 */
   .nav-btn { padding: 1rem; }
   .btn-title { font-size: .85rem; }
+  /* 技能卡片全部单列 */
   .skills-grid { grid-template-columns: 1fr; }
 }
