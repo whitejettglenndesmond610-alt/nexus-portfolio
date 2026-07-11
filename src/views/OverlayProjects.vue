@@ -11,11 +11,9 @@
 defineEmits(['close'])
 
 const missions = [
-  { id: 'M-01', status: '进行中', cls: 'active', title: '星云数据平台', desc: '实时数据可视化中枢 · WebGL 渲染引擎' },
-  { id: 'M-02', status: '已完成', cls: 'done',   title: '流光品牌实验室', desc: '沉浸式品牌体验站点 · GSAP 叙事驱动' },
-  { id: 'M-03', status: '进行中', cls: 'active', title: '密链区块链浏览器', desc: '多链数据聚合 · 智能合约可视化分析' },
-  { id: 'M-04', status: '进行中', cls: 'active', title: '以太 AI 创作工坊', desc: 'AI 生成内容平台 · 大语言模型 + 图像生成' },
-  { id: 'M-05', status: '开发中', cls: 'dev',    title: '流形效率套件', desc: '跨平台效率工具 · 离线优先同步引擎' },
+  { id: 'P-01', status: '已完成', cls: 'done',   title: '个人作品集网页',        desc: 'HTML5/CSS3/JS · Swiper.js · ScrollReveal · 响应式布局 · Vercel 部署' },
+  { id: 'P-02', status: '已完成', cls: 'done',   title: '多知识库 AI 问答系统',  desc: 'Python · LangChain · FAISS · Ollama · Gradio · 本地 RAG' },
+  { id: 'P-03', status: '开发中', cls: 'dev',    title: '离线知识库管理工具',     desc: '基于 SQLite 的本地文档管理 · 增量索引 · OCR 预处理' },
 ]
 </script>
 

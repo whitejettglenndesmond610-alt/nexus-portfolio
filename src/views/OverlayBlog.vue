@@ -14,33 +14,33 @@ defineEmits(['close'])
 const posts = [
   {
     date: '2026.06',
-    title: 'WebGPU 入门：在浏览器里写 Shader 的 5 个陷阱',
-    desc: '从 WebGL 迁移到 WebGPU 的真实踩坑记录，计算管线与渲染管线的区别。',
-    tag: '图形学',
+    title: '从零构建本地 RAG 问答系统：LangChain + FAISS 实战',
+    desc: '记录从文档解析、向量化存储到多轮对话的完整实现过程，踩过的坑和解决方案。',
+    tag: 'AI',
   },
   {
     date: '2026.04',
-    title: 'GSAP 时间线进阶：用 ScrollTrigger 搭建叙事性页面',
-    desc: '如何用 GSAP Timeline 管理复杂动画序列，避免回调地狱。',
-    tag: '动效',
+    title: 'Ollama 本地大模型部署指南：Qwen / Mistral 选型对比',
+    desc: '在消费级硬件上运行开源大模型的实操记录，模型选型、性能优化与常见问题。',
+    tag: 'AI',
   },
   {
     date: '2026.02',
-    title: '赛博朋克 UI 设计系统：从色彩到动效的完整指南',
-    desc: '构建一套可复用的 HUD 组件库——配色 Token、clip-path 斜切、霓虹发光。',
-    tag: '设计系统',
+    title: '用 Gradio 搭建 AI 应用 Web 界面：从入门到自定义主题',
+    desc: 'Gradio 基础组件、布局系统、CSS 主题定制，打造类 ChatGPT 交互体验。',
+    tag: '前端',
   },
   {
     date: '2025.12',
-    title: '性能优化实战：把 FCP 从 3.8s 压到 0.9s',
-    desc: '代码分割、资源预加载、字体子集化——一个企业级项目的完整优化路径。',
-    tag: '性能',
+    title: '个人作品集网站开发记录：从零到部署',
+    desc: 'HTML/CSS/JS 基础 → Swiper.js 轮播 → ScrollReveal 动效 → Vercel 一键部署。',
+    tag: '前端',
   },
   {
     date: '2025.10',
-    title: '用 Three.js 构建数据可视化仪表盘的 7 条经验',
-    desc: '从相机控制到粒子系统，实战中总结的最佳实践。',
-    tag: '3D',
+    title: '计算机专业入门笔记：操作系统与网络那些事',
+    desc: '整理操作系统核心概念与 TCP/IP 协议栈的学习笔记，新手友好的理解方式。',
+    tag: '基础',
   },
 ]
 </script>

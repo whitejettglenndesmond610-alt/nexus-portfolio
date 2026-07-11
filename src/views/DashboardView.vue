@@ -47,18 +47,18 @@ onMounted(() => {
           </div>
           <div class="bio-text">
             <p class="bio-greeting">$ 正在初始化用户会话…</p>
-            <h1 class="bio-name" data-text="灵枢">灵枢</h1>
-            <p class="bio-role">// 数字建筑师 //</p>
+            <h1 class="bio-name" data-text="牛帅">牛帅</h1>
+            <p class="bio-role">// AI 应用开发工程师 //</p>
             <div class="bio-terminal">
-              <span>全栈架构师 · 数字工匠。</span><br>
-              <span>像素为武器 · 代码为铠甲。</span>
+              <span>郑州工商学院 · 计算机科学与技术。</span><br>
+              <span>Python / AI 应用 / 前端开发。</span>
             </div>
           </div>
         </div>
         <div class="bio-stats">
-          <div class="bio-stat"><span class="bs-num">5+</span><span class="bs-lbl">年经验</span></div>
-          <div class="bio-stat"><span class="bs-num">50+</span><span class="bs-lbl">已完成任务</span></div>
-          <div class="bio-stat"><span class="bs-num">30+</span><span class="bs-lbl">合作客户</span></div>
+          <div class="bio-stat"><span class="bs-num">2+</span><span class="bs-lbl">完成项目</span></div>
+          <div class="bio-stat"><span class="bs-num">Python</span><span class="bs-lbl">主力语言</span></div>
+          <div class="bio-stat"><span class="bs-num">AI</span><span class="bs-lbl">探索方向</span></div>
         </div>
 
         <!-- ===== 社交链接 + 简历 ===== -->
